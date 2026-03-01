@@ -1,5 +1,5 @@
 name: Gitea
-version: "1.0.1"
+version: "1.0.2"
 slug: gitea
 description: Private Git service for hobby projects
 arch:
@@ -16,6 +16,8 @@ options:
 schema:
   hostname: "str?"
   http_port: "int?"
+env:
+  - GITEA_ADMIN_PASSWORD
 ports:
   22/tcp: 2222
   3000/tcp: 3000

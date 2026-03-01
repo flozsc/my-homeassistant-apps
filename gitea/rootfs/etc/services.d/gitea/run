@@ -1,4 +1,8 @@
 #!/bin/sh
 set -e
 
+if [ -n "$GITEA_ADMIN_PASSWORD" ]; then
+    export GITEA_ADMIN_PASSWORD
+fi
+
 exec /usr/bin/gitea web --config /data/gitea/conf/app.ini
