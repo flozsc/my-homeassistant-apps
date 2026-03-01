@@ -2,7 +2,7 @@
 set -e
 
 echo "==> Gitea addon starting..."
-echo "==> GITEA_ROOT_URL='$GITEA_ROOT_URL'"
+echo "==> root_url='$root_url'"
 
 CONFIG_FILE="/data/gitea/conf/app.ini"
 
@@ -10,13 +10,13 @@ if [ -f "$CONFIG_FILE" ]; then
     echo "==> Current ROOT_URL in config:"
     grep "^ROOT_URL" "$CONFIG_FILE" || echo "==> ROOT_URL not found in config"
     
-    if [ -n "$GITEA_ROOT_URL" ]; then
-        echo "==> Setting ROOT_URL to: $GITEA_ROOT_URL"
-        sed -i "s|^ROOT_URL\s*=.*|ROOT_URL = ${GITEA_ROOT_URL}|" "$CONFIG_FILE"
+    if [ -n "$root_url" ]; then
+        echo "==> Setting ROOT_URL to: $root_url"
+        sed -i "s|^ROOT_URL\s*=.*|ROOT_URL = ${root_url}|" "$CONFIG_FILE"
         echo "==> ROOT_URL after sed:"
         grep "^ROOT_URL" "$CONFIG_FILE" || echo "==> ROOT_URL not found after sed"
     else
-        echo "==> GITEA_ROOT_URL is empty, not modifying config"
+        echo "==> root_url is empty, not modifying config"
     fi
 else
     echo "==> No config file found"
