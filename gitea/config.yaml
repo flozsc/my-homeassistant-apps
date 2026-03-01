@@ -1,5 +1,5 @@
 name: Gitea
-version: "1.0.4"
+version: "1.0.5"
 slug: gitea
 description: Private Git service for hobby projects
 arch:
@@ -14,11 +14,14 @@ options:
   hostname: "gitea.local"
   http_port: "3000"
   ssh_port: 2222
+  root_url: null
 schema:
   hostname: "str?"
   http_port: "int?"
   ssh_port: "int?"
+  root_url: "str?"
 env:
   - GITEA_ADMIN_PASSWORD
   - GITEA_SSH_PORT
+  - GITEA_ROOT_URL
 image: "ghcr.io/flozsc/{arch}-addon-gitea"

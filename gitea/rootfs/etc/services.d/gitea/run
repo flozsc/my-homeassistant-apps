@@ -13,4 +13,8 @@ if [ -n "$GITEA_SSH_PORT" ]; then
     fi
 fi
 
+if [ -n "$GITEA_ROOT_URL" ]; then
+    sed -i "s|^ROOT_URL = .*|ROOT_URL = $GITEA_ROOT_URL|" /data/gitea/conf/app.ini 2>/dev/null || true
+fi
+
 exec /usr/bin/gitea web --config /data/gitea/conf/app.ini
