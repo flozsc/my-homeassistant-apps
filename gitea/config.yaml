@@ -1,5 +1,5 @@
 name: Gitea
-version: "1.0.5"
+version: "1.0.6"
 slug: gitea
 description: Private Git service for hobby projects
 arch:
@@ -24,4 +24,8 @@ env:
   - GITEA_ADMIN_PASSWORD
   - GITEA_SSH_PORT
   - GITEA_ROOT_URL
+ports:
+  3000/tcp: 3000
+ports_description:
+  3000/tcp: "HTTP"
 image: "ghcr.io/flozsc/{arch}-addon-gitea"
