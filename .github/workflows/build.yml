@@ -36,6 +36,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ghcr.io/flozsc/amd64-addon-gitea:1.0.0
+          build-args: |
+            BUILD_FROM=gitea/gitea:1.21
           labels: |
             org.opencontainers.image.title=Home Assistant Add-on: Gitea
             org.opencontainers.image.description=Private Git service for hobby projects
