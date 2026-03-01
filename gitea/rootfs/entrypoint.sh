@@ -2,30 +2,25 @@
 set -e
 
 echo "==> Gitea addon starting..."
-echo "==> ENV vars:"
-env | grep GITEA || echo "==> No GITEA env vars found"
+echo "==> GITEA_ROOT_URL='$GITEA_ROOT_URL'"
 
 CONFIG_FILE="/data/gitea/conf/app.ini"
 
 if [ -f "$CONFIG_FILE" ]; then
-    echo "==> Found config at $CONFIG_FILE"
+    echo "==> Current ROOT_URL in config:"
+    grep "^ROOT_URL" "$CONFIG_FILE" || echo "==> ROOT_URL not found in config"
     
-    if [ -n "$GITEA_SSH_PORT" ]; then
-        echo "==> SSH_PORT = $GITEA_SSH_PORT"
-        if [ "$GITEA_SSH_PORT" = "0" ]; then
-            sed -i "s/^SSH_PORT = .*/SSH_PORT = -1/" "$CONFIG_FILE"
-        else
-            sed -i "s/^SSH_PORT = .*/SSH_PORT = $GITEA_SSH_PORT/" "$CONFIG_FILE"
-        fi
-    fi
-
     if [ -n "$GITEA_ROOT_URL" ]; then
         echo "==> Setting ROOT_URL to: $GITEA_ROOT_URL"
         sed -i "s|^ROOT_URL\s*=.*|ROOT_URL = ${GITEA_ROOT_URL}|" "$CONFIG_FILE"
+        echo "==> ROOT_URL after sed:"
+        grep "^ROOT_URL" "$CONFIG_FILE" || echo "==> ROOT_URL not found after sed"
+    else
+        echo "==> GITEA_ROOT_URL is empty, not modifying config"
     fi
 else
     echo "==> No config file found"
 fi
 
-echo "==> Starting Gitea as git user..."
+echo "==> Starting Gitea..."
 exec su-exec git /usr/local/bin/gitea web --config /data/gitea/conf/app.ini
