@@ -1,4 +1,4 @@
-name: GitLab CE
-description: Private GitLab CE instance for hobby projects
-url: "https://gitlab.com/gitlab-org/gitlab-ce"
-maintainer: Your Name <your@email.com>
+name: Gitea
+description: Private Git service for hobby projects
+url: "https://github.com/flozsc/my-homeassistant-apps"
+maintainer: Florian
