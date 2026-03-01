@@ -5,6 +5,9 @@ echo "==> Gitea addon starting..."
 echo "==> ENV vars:"
 env | grep GITEA || echo "==> No GITEA env vars found"
 
+echo "==> Looking for gitea binary..."
+which gitea || ls -la /usr/local/bin/ || true
+
 CONFIG_FILE="/data/gitea/conf/app.ini"
 
 if [ -f "$CONFIG_FILE" ]; then
@@ -27,4 +30,4 @@ else
     echo "==> No config file found"
 fi
 
-exec /usr/bin/gitea web --config /data/gitea/conf/app.ini
+exec "$(which gitea)" web --config /data/gitea/conf/app.ini
