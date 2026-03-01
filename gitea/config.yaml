@@ -1,5 +1,5 @@
 name: Gitea
-version: "1.1.8"
+version: "1.1.9"
 slug: gitea
 description: Private Git service for hobby projects
 arch:
@@ -10,6 +10,7 @@ startup: system
 init: false
 map:
   - share:rw
+  - config:rw
 options:
   hostname: "gitea.local"
   http_port: "3000"
