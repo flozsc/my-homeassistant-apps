@@ -35,7 +35,7 @@ jobs:
           file: ./gitea/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/flozsc/amd64-addon-gitea:1.1.9
+          tags: ghcr.io/flozsc/amd64-addon-gitea:1.2.0
           build-args: |
             BUILD_FROM=gitea/gitea:1.21
           labels: |
