@@ -22,4 +22,4 @@ ports:
 ports_description:
   22/tcp: "SSH"
   3000/tcp: "HTTP"
-image: "ghcr.io/home-assistant/{arch}-addon-gitea"
+image: "ghcr.io/flozsc/{arch}-addon-gitea"
