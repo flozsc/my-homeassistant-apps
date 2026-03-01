@@ -1,0 +1,4 @@
+name: GitLab CE
+description: Private GitLab CE instance for hobby projects
+url: "https://gitlab.com/gitlab-org/gitlab-ce"
+maintainer: Your Name <your@email.com>

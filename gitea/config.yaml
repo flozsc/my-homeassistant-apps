@@ -1,0 +1,25 @@
+name: Gitea
+version: "1.0.0"
+slug: gitea
+description: Private Git service for hobby projects
+arch:
+  - amd64
+  - aarch64
+url: "https://gitea.io"
+startup: system
+init: false
+map:
+  - share:rw
+options:
+  hostname: "gitea.local"
+  http_port: "3000"
+schema:
+  hostname: "str?"
+  http_port: "int?"
+ports:
+  22/tcp: 2222
+  3000/tcp: 3000
+ports_description:
+  22/tcp: "SSH"
+  3000/tcp: "HTTP"
+image: "ghcr.io/home-assistant/{arch}-addon-gitea"

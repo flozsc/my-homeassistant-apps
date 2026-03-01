@@ -1,0 +1,8 @@
+build_from:
+  aarch64: "gitea/gitea:1.21"
+  amd64: "gitea/gitea:1.21"
+labels:
+  org.opencontainers.image.title: "Home Assistant Add-on: Gitea"
+  org.opencontainers.image.description: "Private Git service for hobby projects"
+  org.opencontainers.image.source: "https://github.com/yourrepo/homeassistant-app-gitlab"
+  org.opencontainers.image.licenses: "MIT"
