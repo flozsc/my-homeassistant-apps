@@ -1,14 +1,20 @@
 #!/bin/sh
 set -e
 
+echo "==> Gitea addon starting..."
+
 if [ -n "$GITEA_ADMIN_PASSWORD" ]; then
     export GITEA_ADMIN_PASSWORD
+    echo "==> Admin password set"
 fi
 
 CONFIG_FILE="/data/gitea/conf/app.ini"
 
 if [ -f "$CONFIG_FILE" ]; then
+    echo "==> Found config at $CONFIG_FILE"
+    
     if [ -n "$GITEA_SSH_PORT" ]; then
+        echo "==> SSH_PORT = $GITEA_SSH_PORT"
         if [ "$GITEA_SSH_PORT" = "0" ]; then
             sed -i "s/^SSH_PORT = .*/SSH_PORT = -1/" "$CONFIG_FILE"
         else
@@ -17,8 +23,15 @@ if [ -f "$CONFIG_FILE" ]; then
     fi
 
     if [ -n "$GITEA_ROOT_URL" ]; then
+        echo "==> Setting ROOT_URL to: $GITEA_ROOT_URL"
         sed -i "s|^ROOT_URL\s*=.*|ROOT_URL = ${GITEA_ROOT_URL}|" "$CONFIG_FILE"
+        echo "==> Current ROOT_URL in config:"
+        grep "^ROOT_URL" "$CONFIG_FILE"
+    else
+        echo "==> GITEA_ROOT_URL not set"
     fi
+else
+    echo "==> No config file found at $CONFIG_FILE (first run?)"
 fi
 
 exec /usr/bin/gitea web --config /data/gitea/conf/app.ini
