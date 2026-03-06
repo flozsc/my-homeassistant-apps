@@ -35,6 +35,7 @@ cat > "$CONFIG_FILE" << EOF
 APP_NAME = Gitea: Git with a cup of tea
 RUN_MODE = prod
 RUN_USER = git
+WORK_PATH = /data/gitea
 
 [server]
 PROTOCOL = http
@@ -89,6 +90,8 @@ if [ -n "$ADMIN_PASSWORD" ]; then
     export GITEA_ADMIN_USERNAME="gitea_admin"
     export GITEA_ADMIN_EMAIL="admin@localhost"
 fi
+
+export GITEA_WORK_DIR=/data/gitea
 
 chown git:git "$CONFIG_FILE"
 
