@@ -21,6 +21,7 @@ schema:
   ssh_port: "int?"
   root_url: "str?"
   admin_username: "str?"
+  admin_email: "str?"
   admin_password: "password?"
 ports:
   3000/tcp: 3000

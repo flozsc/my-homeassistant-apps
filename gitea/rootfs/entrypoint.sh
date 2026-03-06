@@ -11,22 +11,25 @@ HOSTNAME="localhost"
 HTTP_PORT="3000"
 SSH_PORT="2222"
 ROOT_URL=""
-ADMIN_PASSWORD=""
 ADMIN_USERNAME="gitea_admin"
+ADMIN_EMAIL="admin@localhost"
+ADMIN_PASSWORD=""
 
 if [ -f "$OPTIONS_FILE" ]; then
     HOSTNAME=$(grep -o '"hostname"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"hostname"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
     HTTP_PORT=$(grep -o '"http_port"[[:space:]]*:[[:space:]]*[^,}]*' "$OPTIONS_FILE" | sed 's/.*"http_port"[[:space:]]*:[[:space:]]*\([0-9]*\).*/\1/')
     SSH_PORT=$(grep -o '"ssh_port"[[:space:]]*:[[:space:]]*[0-9]*' "$OPTIONS_FILE" | sed 's/.*"ssh_port"[[:space:]]*:[[:space:]]*\([0-9]*\)/\1/')
     ROOT_URL=$(grep -o '"root_url"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"root_url"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
-    ADMIN_PASSWORD=$(grep -o '"admin_password"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"admin_password"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
     ADMIN_USERNAME=$(grep -o '"admin_username"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"admin_username"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
+    ADMIN_EMAIL=$(grep -o '"admin_email"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"admin_email"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
+    ADMIN_PASSWORD=$(grep -o '"admin_password"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"admin_password"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
 fi
 
 [ -z "$HOSTNAME" ] && HOSTNAME="localhost"
 [ -z "$HTTP_PORT" ] && HTTP_PORT="3000"
 [ -z "$SSH_PORT" ] && SSH_PORT="2222"
 [ -z "$ADMIN_USERNAME" ] && ADMIN_USERNAME="gitea_admin"
+[ -z "$ADMIN_EMAIL" ] && ADMIN_EMAIL="admin@localhost"
 
 if [ -n "$ROOT_URL" ]; then
     ROOT_URL_LINE="ROOT_URL = $ROOT_URL"
@@ -92,7 +95,7 @@ EOF
 if [ -n "$ADMIN_PASSWORD" ]; then
     export GITEA_ADMIN_PASSWORD="$ADMIN_PASSWORD"
     export GITEA_ADMIN_USERNAME="$ADMIN_USERNAME"
-    export GITEA_ADMIN_EMAIL="admin@localhost"
+    export GITEA_ADMIN_EMAIL="$ADMIN_EMAIL"
 fi
 
 export GITEA_WORK_DIR=/data/gitea

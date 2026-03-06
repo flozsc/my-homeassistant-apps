@@ -14,6 +14,9 @@ configuration:
   admin_username:
     name: "Admin Username"
     description: "Username for the admin user (created if admin_password is set)"
+  admin_email:
+    name: "Admin Email"
+    description: "Email address for the admin user"
   admin_password:
     name: "Admin Password"
     description: "Password for the admin user"
