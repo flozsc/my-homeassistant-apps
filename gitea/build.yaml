@@ -1,0 +1,7 @@
+build_from:
+  amd64: ghcr.io/home-assistant/amd64-base-alpine
+  armv7: ghcr.io/home-assistant/armv7-base-alpine
+  aarch64: ghcr.io/home-assistant/aarch64-base-alpine
+  i386: ghcr.io/home-assistant/i386-base-alpine
+args:
+  GITEA_VERSION: "1.21"

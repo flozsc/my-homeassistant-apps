@@ -1,19 +1,31 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
-RUN apk add --no-cache curl gcompat
+ARG GITEA_VERSION=1.21
+ARG TARGETARCH
+
+RUN apk add --no-cache curl gcompat git
 
 WORKDIR /data
 
+RUN case "${TARGETARCH}" in \
+        amd64)  ARCH="amd64" ;; \
+        arm64)  ARCH="arm64" ;; \
+        arm)    ARCH="arm" ;; \
+        386)    ARCH="386" ;; \
+        *)      ARCH="amd64" ;; \
+    esac && \
+    curl -fsSL "https://dl.gitea.com/gitea/${GITEA_VERSION}/gitea-${GITEA_VERSION}-linux-${ARCH}" -o /usr/local/bin/gitea && \
+    chmod +x /usr/local/bin/gitea && \
+    addgroup -S git && \
+    adduser -S git -G git && \
+    mkdir -p /data/gitea /data/git/repositories /data/git/custom && \
+    chown -R git:git /data
+
+USER git
+
 COPY run.sh /
 RUN chmod a+x /run.sh
-
-ENV USER_UID=1000
-ENV USER_GID=1000
-ENV GITEA__database__DB_TYPE=sqlite3
-ENV GITEA__database__PATH=/data/gitea/gitea.db
-ENV GITEA__service__DISABLE_REGISTRATION=true
-ENV GITEA__security__INSTALL_LOCK=true
 
 ENTRYPOINT [ "/run.sh" ]
 CMD []
