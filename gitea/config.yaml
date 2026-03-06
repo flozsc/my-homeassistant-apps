@@ -15,8 +15,6 @@ options:
   hostname: "gitea.local"
   http_port: "3000"
   ssh_port: 2222
-  root_url: null
-  admin_password: null
 schema:
   hostname: "str?"
   http_port: "int?"
