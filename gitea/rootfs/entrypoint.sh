@@ -46,16 +46,13 @@ DISABLE_SSH = false
 SSH_PORT = $SSH_PORT
 START_SSH_SERVER = true
 LANDING_PAGE = home
-
-[database]
-DB_TYPE = sqlite3
-PATH = /data/gitea/data/gitea.db
-LOG_SQL = false
+APP_DATA_PATH = /data/gitea/data
 
 [security]
 INSTALL_LOCK = true
 SECRET_KEY = 
 INTERNAL_TOKEN = 
+JWT_SECRET = 
 
 [service]
 DISABLE_REGISTRATION = false
@@ -92,6 +89,12 @@ if [ -n "$ADMIN_PASSWORD" ]; then
 fi
 
 export GITEA_WORK_DIR=/data/gitea
+export GITEA_CUSTOM=/data/gitea
+
+mkdir -p /data/gitea/{conf,log,data,data/repositories,data/tmp,data/jwt,data/lfs,data/attachments}
+chown -R git:git /data
+
+cd /data/gitea
 
 chown git:git "$CONFIG_FILE"
 
