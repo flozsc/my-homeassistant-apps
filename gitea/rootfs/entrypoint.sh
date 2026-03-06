@@ -4,6 +4,9 @@ set -e
 CONFIG_FILE="/data/gitea/conf/app.ini"
 OPTIONS_FILE="/data/options.json"
 
+mkdir -p /data/gitea/conf /data/gitea/log /data/gitea/data
+chown -R git:git /data/gitea
+
 if [ -f "$OPTIONS_FILE" ]; then
     ROOT_URL=$(grep -o '"root_url"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"root_url"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
     SSH_PORT=$(grep -o '"ssh_port"[[:space:]]*:[[:space:]]*[0-9]*' "$OPTIONS_FILE" | sed 's/.*"ssh_port"[[:space:]]*:[[:space:]]*\([0-9]*\)/\1/')
