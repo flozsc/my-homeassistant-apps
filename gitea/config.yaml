@@ -1,30 +1,45 @@
 name: Gitea
-version: "1.2.0"
+version: "2.0.0"
 slug: gitea
-description: Private Git service for hobby projects
+description: Private Git service with SQLite database
 arch:
   - amd64
+  - armv7
   - aarch64
-url: "https://gitea.io"
-startup: system
+  - i386
+startup: services
+boot: auto
 init: false
-map:
-  - share:rw
-  - config:rw
-options:
-  hostname: "gitea.local"
-  http_port: "3000"
-  ssh_port: 2222
-schema:
-  hostname: "str?"
-  http_port: "int?"
-  ssh_port: "int?"
-  root_url: "str?"
-  admin_username: "str?"
-  admin_email: "str?"
-  admin_password: "password?"
+image: ghcr.io/go-gitea/gitea:{arch}
 ports:
   3000/tcp: 3000
+  2222/tcp: 2222
 ports_description:
-  3000/tcp: "HTTP"
-image: "ghcr.io/flozsc/{arch}-addon-gitea"
+  3000/tcp: HTTP web interface
+  2222/tcp: SSH git operations
+environment:
+  USER_UID: "1000"
+  USER_GID: "1000"
+  GITEA__database__DB_TYPE: sqlite3
+  GITEA__database__PATH: /data/gitea/gitea.db
+map:
+  - type: data
+    read_only: false
+  - type: share
+    read_only: false
+options:
+  root_url: null
+  admin_username: gitea_admin
+  admin_email: admin@example.com
+  http_port: 3000
+  ssh_port: 2222
+schema:
+  root_url: url
+  admin_username: str
+  admin_email: email
+  admin_password: password?
+  http_port: int(1,65535)
+  ssh_port: int(1,65535)
+hassio_api: true
+auth_api: true
+watchdog: tcp://[HOST]:[PORT:3000]

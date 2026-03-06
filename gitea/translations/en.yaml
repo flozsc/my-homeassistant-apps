@@ -1,24 +1,19 @@
 configuration:
-  hostname:
-    name: "Hostname"
-    description: "Hostname for Gitea (e.g., gitea.local)"
-  http_port:
-    name: "HTTP Port"
-    description: "HTTP port for Gitea web interface"
-  ssh_port:
-    name: "SSH Port"
-    description: "SSH port for Git access"
   root_url:
-    name: "Root URL"
-    description: "Full public URL (e.g., https://gitea.example.com)"
+    name: Root URL
+    description: External URL for Gitea
   admin_username:
-    name: "Admin Username"
-    description: "Username for the admin user (created if admin_password is set)"
+    name: Admin Username
+    description: Admin account username
   admin_email:
-    name: "Admin Email"
-    description: "Email address for the admin user"
+    name: Admin Email
+    description: Admin account email
   admin_password:
-    name: "Admin Password"
-    description: "Password for the admin user"
-network:
-  3000/tcp: "HTTP Web Interface"
+    name: Admin Password
+    description: Admin account password
+  http_port:
+    name: HTTP Port
+    description: Web interface port
+  ssh_port:
+    name: SSH Port
+    description: SSH git port

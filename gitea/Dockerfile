@@ -1,6 +1,9 @@
-ARG BUILD_FROM=gitea/gitea:1.21
+ARG BUILD_FROM
 FROM $BUILD_FROM
 
-COPY rootfs/ /
+WORKDIR /data
 
-ENTRYPOINT ["/entrypoint.sh"]
+COPY run.sh /
+RUN chmod a+x /run.sh
+
+CMD [ "/run.sh" ]
