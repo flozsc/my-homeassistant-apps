@@ -18,6 +18,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Extract version from config
+        id: version
+        run: |
+          VERSION=$(grep -E '^version:' gitea/config.yaml | sed 's/version: "\(.*\)"/\1/')
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version $VERSION"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -35,7 +42,9 @@ jobs:
           file: ./gitea/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/flozsc/amd64-addon-gitea:1.2.0
+          tags: |
+            ghcr.io/flozsc/amd64-addon-gitea:${{ steps.version.outputs.VERSION }}
+            ghcr.io/flozsc/amd64-addon-gitea:latest
           build-args: |
             BUILD_FROM=gitea/gitea:1.21
           labels: |
