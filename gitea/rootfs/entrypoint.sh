@@ -7,29 +7,89 @@ OPTIONS_FILE="/data/options.json"
 mkdir -p /data/gitea/conf /data/gitea/log /data/gitea/data
 chown -R git:git /data/gitea
 
+HOSTNAME="localhost"
+HTTP_PORT="3000"
+SSH_PORT="2222"
+ROOT_URL=""
+ADMIN_PASSWORD=""
+
 if [ -f "$OPTIONS_FILE" ]; then
-    ROOT_URL=$(grep -o '"root_url"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"root_url"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
+    HOSTNAME=$(grep -o '"hostname"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"hostname"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
+    HTTP_PORT=$(grep -o '"http_port"[[:space:]]*:[[:space:]]*[^,}]*' "$OPTIONS_FILE" | sed 's/.*"http_port"[[:space:]]*:[[:space:]]*\([0-9]*\).*/\1/')
     SSH_PORT=$(grep -o '"ssh_port"[[:space:]]*:[[:space:]]*[0-9]*' "$OPTIONS_FILE" | sed 's/.*"ssh_port"[[:space:]]*:[[:space:]]*\([0-9]*\)/\1/')
+    ROOT_URL=$(grep -o '"root_url"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"root_url"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
     ADMIN_PASSWORD=$(grep -o '"admin_password"[[:space:]]*:[[:space:]]*"[^"]*"' "$OPTIONS_FILE" | sed 's/.*"admin_password"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
-    
-    if [ -n "$ADMIN_PASSWORD" ]; then
-        export GITEA_ADMIN_PASSWORD="$ADMIN_PASSWORD"
-        export GITEA_ADMIN_USERNAME="gitea_admin"
-    fi
 fi
 
-if [ -f "$CONFIG_FILE" ]; then
-    if [ -n "$ROOT_URL" ]; then
-        sed -i "s|^ROOT_URL\s*=.*|ROOT_URL = ${ROOT_URL}|" "$CONFIG_FILE"
-    fi
-    
-    if [ -n "$SSH_PORT" ]; then
-        if [ "$SSH_PORT" = "0" ]; then
-            sed -i "s/^SSH_PORT = .*/SSH_PORT = -1/" "$CONFIG_FILE"
-        else
-            sed -i "s/^SSH_PORT = .*/SSH_PORT = $SSH_PORT/" "$CONFIG_FILE"
-        fi
-    fi
+[ -z "$HOSTNAME" ] && HOSTNAME="localhost"
+[ -z "$HTTP_PORT" ] && HTTP_PORT="3000"
+[ -z "$SSH_PORT" ] && SSH_PORT="2222"
+
+if [ -n "$ROOT_URL" ]; then
+    ROOT_URL_LINE="ROOT_URL = $ROOT_URL"
+else
+    ROOT_URL_LINE="ROOT_URL = http://${HOSTNAME}:${HTTP_PORT}/"
 fi
+
+cat > "$CONFIG_FILE" << EOF
+APP_NAME = Gitea: Git with a cup of tea
+RUN_MODE = prod
+RUN_USER = git
+
+[server]
+PROTOCOL = http
+DOMAIN = $HOSTNAME
+HTTP_PORT = $HTTP_PORT
+$ROOT_URL_LINE
+DISABLE_SSH = false
+SSH_PORT = $SSH_PORT
+START_SSH_SERVER = true
+LANDING_PAGE = home
+
+[database]
+DB_TYPE = sqlite3
+PATH = /data/gitea/data/gitea.db
+LOG_SQL = false
+
+[security]
+INSTALL_LOCK = true
+SECRET_KEY = 
+INTERNAL_TOKEN = 
+
+[service]
+DISABLE_REGISTRATION = false
+REQUIRE_SIGNIN_VIEW = false
+REGISTER_EMAIL_CONFIRM = false
+ENABLE_NOTIFY_MAIL = false
+DEFAULT_KEEP_EMAIL_PRIVATE = false
+DEFAULT_ALLOW_CREATE_ORGANIZATION = true
+DEFAULT_ENABLE_TIMETRACKING = true
+NO_REPLY_ADDRESS = noreply.localhost
+
+[oauth2]
+ENABLE = false
+
+[mailer]
+ENABLED = false
+
+[session]
+PROVIDER = file
+
+[log]
+MODE = console, file
+LEVEL = Info
+ROOT_PATH = /data/gitea/log
+
+[repository]
+ROOT = /data/gitea/data/repositories
+EOF
+
+if [ -n "$ADMIN_PASSWORD" ]; then
+    export GITEA_ADMIN_PASSWORD="$ADMIN_PASSWORD"
+    export GITEA_ADMIN_USERNAME="gitea_admin"
+    export GITEA_ADMIN_EMAIL="admin@localhost"
+fi
+
+chown git:git "$CONFIG_FILE"
 
 exec su-exec git /usr/local/bin/gitea web --config /data/gitea/conf/app.ini
