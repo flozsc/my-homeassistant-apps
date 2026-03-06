@@ -11,21 +11,41 @@ SSH_PORT=$(bashio::config 'ssh_port')
 mkdir -p /data/gitea
 mkdir -p /data/git
 
-export GITEA__server__ROOT_URL="${ROOT_URL}"
-export GITEA__server__HTTP_PORT="${HTTP_PORT}"
-export GITEA__server__SSH_PORT="${SSH_PORT}"
-export GITEA__server__SSH_DOMAIN="$(bashio::host.hostname)"
-export GITEA__database__DB_TYPE=sqlite3
-export GITEA__database__PATH=/data/gitea/gitea.db
-export GITEA__service__DISABLE_REGISTRATION=true
-export GITEA__security__INSTALL_LOCK=true
+cat > /data/gitea/app.ini << EOF
+APP_NAME = Gitea
+RUN_USER = git
+RUN_MODE = prod
 
-export GITEA__admin__DEFAULT_ADMIN_USER="${ADMIN_USERNAME}"
-export GITEA__admin__DEFAULT_ADMIN_EMAIL="${ADMIN_EMAIL}"
+[repository]
+ROOT = /data/git/repositories
+
+[database]
+DB_TYPE = sqlite3
+PATH = /data/gitea/gitea.db
+
+[server]
+DOMAIN = $(hostname -f)
+HTTP_PORT = ${HTTP_PORT}
+ROOT_URL = ${ROOT_URL}
+SSH_PORT = ${SSH_PORT}
+SSH_DOMAIN = $(hostname -f)
+START_SSH_SERVER = true
+
+[service]
+DISABLE_REGISTRATION = true
+
+[security]
+INSTALL_LOCK = true
+SECRET_KEY =
+
+[admin]
+DEFAULT_ADMIN_USER = ${ADMIN_USERNAME}
+DEFAULT_ADMIN_EMAIL = ${ADMIN_EMAIL}
+EOF
 
 if bashio::config.exists 'admin_password'; then
     ADMIN_PASSWORD=$(bashio::config 'admin_password')
-    export GITEA__admin__DEFAULT_ADMIN_PASSWORD="${ADMIN_PASSWORD}"
+    sed -i "/DEFAULT_ADMIN_EMAIL/a DEFAULT_ADMIN_PASSWORD = ${ADMIN_PASSWORD}" /data/gitea/app.ini
     bashio::log.info "  Admin Password: [SET]"
 fi
 
@@ -36,4 +56,4 @@ bashio::log.info "  SSH Port: ${SSH_PORT}"
 bashio::log.info "  Admin User: ${ADMIN_USERNAME}"
 bashio::log.info "  Registration: Disabled"
 
-exec /usr/bin/entrypoint
+exec /app/gitea/gitea web --config /data/gitea/app.ini --custom-path /data/git/custom --work-path /data/git
