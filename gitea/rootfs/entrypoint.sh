@@ -4,8 +4,8 @@ set -e
 CONFIG_FILE="/data/gitea/conf/app.ini"
 OPTIONS_FILE="/data/options.json"
 
-mkdir -p /data/gitea/conf /data/gitea/log /data/gitea/data
-chown -R git:git /data/gitea
+mkdir -p /data/gitea/conf /data/gitea/log /data/gitea/data /data/gitea/data/repositories /data/gitea/data/tmp /data/gitea/data/jwt
+chown -R git:git /data
 
 HOSTNAME="localhost"
 HTTP_PORT="3000"
