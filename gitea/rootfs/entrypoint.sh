@@ -48,6 +48,10 @@ START_SSH_SERVER = true
 LANDING_PAGE = home
 APP_DATA_PATH = /data/gitea/data
 
+[database]
+DB_TYPE = sqlite3
+PATH = /data/gitea/data/gitea.db
+
 [security]
 INSTALL_LOCK = true
 SECRET_KEY = 
