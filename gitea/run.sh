@@ -36,4 +36,4 @@ bashio::log.info "  SSH Port: ${SSH_PORT}"
 bashio::log.info "  Admin User: ${ADMIN_USERNAME}"
 bashio::log.info "  Registration: Disabled"
 
-exec /usr/bin/entrypoint /bin/sh
+exec /usr/bin/entrypoint
