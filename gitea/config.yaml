@@ -10,7 +10,7 @@ arch:
 startup: services
 boot: auto
 init: false
-image: ghcr.io/go-gitea/gitea:{arch}
+image: ghcr.io/flozsc/{arch}-addon-gitea
 ports:
   3000/tcp: 3000
   2222/tcp: 2222
