@@ -1,35 +1,31 @@
-ARG BUILD_FROM
-FROM $BUILD_FROM
+# MyGit - Private Git Server for Home Assistant
+# Single-stage build that works with Home Assistant's build system
 
-ARG GIT_VERSION=2.45.2
+FROM ghcr.io/home-assistant/amd64-base:latest
 
-# Install dependencies
-RUN apk add --no-cache \
-    git \
-    openssh-server \
-    ca-certificates \
-    && update-ca-certificates
+# Install build dependencies
+RUN apk add --no-cache git openssh-server ca-certificates && \
+    wget -q -O /tmp/go.tar.gz https://go.dev/dl/go1.26.1.linux-amd64.tar.gz && \
+    rm -rf /usr/local/go && \
+    tar -C /usr/local -xzf /tmp/go.tar.gz && \
+    rm /tmp/go.tar.gz && \
+    export PATH=/usr/local/go/bin:$PATH
 
-# Create git user
+# Create git user and directories
 RUN addgroup -S git && \
     adduser -S -G git git && \
     mkdir -p /data/repos && \
     chown git:git /data/repos && \
     chmod 755 /data/repos
 
-# Copy application
+# Build the application
 WORKDIR /app
 COPY . .
-
-# Build application
-RUN go build -o /usr/local/bin/mygit ./src/main.go && \
-    chown git:git /usr/local/bin/mygit && \
-    chmod 755 /usr/local/bin/mygit
+RUN /usr/local/go/bin/go build -o /usr/local/bin/mygit ./src/main.go
 
 # Copy startup script
 COPY run-test.sh /run.sh
-RUN chmod +x /run.sh && \
-    chown git:git /run.sh
+RUN chmod +x /run.sh && chown git:git /run.sh
 
 USER git
 CMD ["/run.sh"]

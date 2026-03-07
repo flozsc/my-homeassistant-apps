@@ -92,7 +92,7 @@ import (
 ```bash
 # Build the container
 podman build --security-opt label=disable \
-  --build-arg BUILD_FROM=golang:alpine \
+
   -t mygit-test -f Dockerfile .
 
 # Run the container
