@@ -20,8 +20,13 @@ RUN addgroup -S git && \
 
 # Build the application
 WORKDIR /app
-COPY . .
+COPY go.mod ./
+COPY src/ ./src/
 RUN /usr/local/go/bin/go build -o /usr/local/bin/mygit ./src/main.go
+
+# Copy web templates and static files
+COPY web/ /data/web/
+RUN mkdir -p /data/static && chmod -R 755 /data/
 
 # Copy run script and S6 service definition
 COPY run.sh /run.sh
