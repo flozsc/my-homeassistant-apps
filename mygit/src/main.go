@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	
+	"github.com/flozsc/mygit/src/auth"
 )
 
 const (
@@ -34,15 +36,19 @@ func main() {
 	// Web routes
 	mux.HandleFunc("/repos", handleRepoList)
 	mux.HandleFunc("/repos/", handleRepo)
-	
+
 	// Main handler that routes both web and Git requests
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mainHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if isGitRequest(r) {
 			handleGitSmartHTTP(w, r)
 		} else {
 			handleIndex(w, r)
 		}
 	})
+
+	// Wrap with authentication middleware
+	wrappedHandler := auth.BasicAuthMiddleware(mainHandler)
+	mux.Handle("/", wrappedHandler)
 
 	// Start server
 	addr := ":" + httpPort
