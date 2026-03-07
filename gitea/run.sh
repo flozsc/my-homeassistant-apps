@@ -56,4 +56,8 @@ bashio::log.info "  SSH Port: ${SSH_PORT}"
 bashio::log.info "  Admin User: ${ADMIN_USERNAME}"
 bashio::log.info "  Registration: Disabled"
 
-exec /usr/local/bin/gitea web --config /data/gitea/app.ini --custom-path /data/git/custom --work-path /data/git
+# Ensure all directories have correct ownership for the git user
+chown -R git:git /data/gitea /data/git
+
+# Use s6-setuidgid to drop privileges and run Gitea as the git user
+exec s6-setuidgid git /usr/local/bin/gitea web --config /data/gitea/app.ini --custom-path /data/git/custom --work-path /data/git
