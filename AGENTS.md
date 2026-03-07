@@ -49,10 +49,12 @@ mygit/
 
 ### 3. Home Assistant Integration
 - Use `init: true` for S6 overlay compatibility
+- Implement proper S6 service configuration with `/etc/services.d/` directory
 - Follow addon configuration best practices
 - Implement health checks
 - Support backup/restore
 - Use Supervisor API for configuration
+- Ensure applications run as child processes of S6 (not PID 1)
 
 ### 4. Authentication Flow
 ```
@@ -85,11 +87,13 @@ Client → Authentication Middleware → Permission Check → Handler
 - **Code Comments**: Comprehensive inline docs
 
 ### 8. Lessons Learned from Gitea Issues
-- **S6 Overlay**: Must run as PID 1, configure properly
+- **S6 Overlay**: Must run as PID 1, configure properly with service directories
+- **S6 Service Files**: Require `/etc/services.d/<service>/run` and `finish` scripts
 - **Permissions**: Volume mounts need careful handling
 - **Non-Root**: Run as dedicated user (git:git)
 - **Configuration**: Use Supervisor API with fallbacks
 - **Testing**: Local testing with podman works well
+- **PID 1**: S6 overlay must be PID 1, applications run as child processes
 
 ### 9. Decision Making Principles
 1. **Favor Simplicity**: When in doubt, choose the simpler solution
