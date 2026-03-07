@@ -1,5 +1,21 @@
 # MyGit Development Guide
 
+## 🎯 Development Approach
+
+**Key Decision**: Simple and reliable - use Home Assistant's built-in S6 overlay without custom configuration.
+
+### Why This Approach
+- Avoids PID 1 conflicts
+- Uses proven HA patterns
+- Simpler to maintain
+- Works reliably in production
+
+### When to Change
+Only reconsider if:
+- Specific S6 features are absolutely required
+- Home Assistant changes base image significantly
+- Performance issues arise that require custom S6 tuning
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -68,6 +84,9 @@ HTTP_PORT=8080 ./test-local.sh
 
 ## 🧪 Testing
 
+### Key Testing Principle
+**Test in the target environment first** - Home Assistant behavior differs from local testing.
+
 ### Home Assistant Environment
 
 The add-on uses **bashio framework** for configuration:
@@ -81,6 +100,9 @@ repo_storage: /data/repos
 ```
 
 ### Local Testing
+
+**Purpose**: Quick development and debugging
+**Limitation**: Behavior may differ from Home Assistant environment
 
 ```bash
 # Start server
@@ -97,6 +119,8 @@ echo "test" > README.md
 git add . && git commit -m "test"
 git push origin main
 ```
+
+**Important**: Always verify fixes in Home Assistant environment, not just locally.
 
 ## 🐳 Container Development
 
@@ -221,6 +245,32 @@ git push origin feature/your-feature
 
 # Create PR to main branch
 ```
+
+## 🔄 Avoiding the Testing Loop
+
+### Common Pitfall
+Getting stuck in a cycle of:
+1. Test locally → Add configuration to make it work
+2. Deploy to HA → Breaks because HA environment differs
+3. Test locally again → Add more configuration
+4. Repeat...
+
+### Solution
+- **Test in target environment first** (Home Assistant)
+- **Keep configuration minimal**
+- **Remove old configuration completely** when changing approaches
+- **Document decisions clearly** to avoid confusion
+
+### When to Test Locally
+- Quick development and debugging
+- Testing basic functionality
+- Performance optimization
+
+### When to Test in Home Assistant
+- Before releasing any version
+- When changing process management
+- When modifying configuration handling
+- Always for final verification
 
 ## 📊 Debugging
 
