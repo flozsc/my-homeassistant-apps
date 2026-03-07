@@ -23,8 +23,9 @@ WORKDIR /app
 COPY . .
 RUN /usr/local/go/bin/go build -o /usr/local/bin/mygit ./src/main.go
 
-# Copy run script
+# Copy run script and S6 service definition
 COPY run.sh /run.sh
+COPY rootfs/ /
 
 # Set permissions
-RUN chmod +x /run.sh
+RUN chmod +x /run.sh /etc/services.d/mygit/run
