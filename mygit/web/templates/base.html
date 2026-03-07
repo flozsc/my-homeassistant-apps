@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - MyGit</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="/">MyGit</a></h1>
+            <nav>
+                <a href="/repos">Repositories</a>
+                <a href="/repos/new">New Repository</a>
+                {{if .Authenticated}}
+                <a href="/settings">Settings</a>
+                <a href="/logout">Logout</a>
+                {{else}}
+                <a href="/login">Login</a>
+                {{end}}
+            </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        {{template "content" .}}
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>MyGit v{{.Version}} | <a href="https://github.com/flozsc/mygit">Source Code</a></p>
+        </div>
+    </footer>
+</body>
+</html>

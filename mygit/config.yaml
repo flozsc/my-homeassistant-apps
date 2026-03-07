@@ -1,0 +1,33 @@
+name: "MyGit - Private Git Server"
+version: "1.0.0"
+slug: mygit
+description: "Lightweight private Git server with web interface"
+url: "https://github.com/flozsc/mygit"
+arch:
+  - amd64
+  - armv7
+  - aarch64
+  - i386
+startup: services
+boot: auto
+init: true
+
+map:
+  - type: data
+    read_only: false
+
+options:
+  http_port: 3000
+  admin_username: admin
+  admin_password: null
+  repo_storage: /data/repos
+
+schema:
+  http_port: int(1024,65535)
+  admin_username: str
+  admin_password: password
+  repo_storage: str
+
+hassio_api: true
+auth_api: true
+watchdog: http://[HOST]:[PORT:3000]/

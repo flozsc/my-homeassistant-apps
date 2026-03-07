@@ -1,0 +1,26 @@
+{
+  "name": "MyGit Development Container",
+  "image": "golang:latest",
+  "containerEnv": {
+    "GO111MODULE": "on",
+    "GOPROXY": "https://proxy.golang.org,direct",
+    "GOPRIVATE": "github.com/flozsc/*"
+  },
+  "mounts": [
+    "source=/var/home/flozsc/Code/my-homeassistant-apps/mygit,target=/workspace,type=bind,consistency=cached"
+  ],
+  "remoteUser": "root",
+  "runArgs": ["--security-opt", "label=disable"],
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "ms-vscode.vscode-go-debug",
+        "redhat.vscode-yaml"
+      ]
+    }
+  },
+  "forwardPorts": [3000, 2222],
+  "shutdownAction": "stopContainer"
+}

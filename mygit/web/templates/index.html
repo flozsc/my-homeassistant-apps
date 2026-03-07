@@ -1,0 +1,33 @@
+{{define "content"}}
+<div class="hero">
+    <h2>Welcome to MyGit</h2>
+    <p>Your private Git server</p>
+    
+    {{if .Authenticated}}
+    <div class="actions">
+        <a href="/repos/new" class="button primary">Create Repository</a>
+        <a href="/repos" class="button">Browse Repositories</a>
+    </div>
+    {{else}}
+    <div class="actions">
+        <a href="/login" class="button primary">Login</a>
+        <a href="/repos" class="button">Browse Public Repositories</a>
+    </div>
+    {{end}}
+</div>
+
+<div class="features">
+    <div class="feature">
+        <h3>Private</h3>
+        <p>Your code stays yours. No public access unless you want it.</p>
+    </div>
+    <div class="feature">
+        <h3>Simple</h3>
+        <p>Easy to set up and use. No complex configuration required.</p>
+    </div>
+    <div class="feature">
+        <h3>Fast</h3>
+        <p>Optimized for performance on home servers and small teams.</p>
+    </div>
+</div>
+{{end}}
