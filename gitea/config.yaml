@@ -9,6 +9,7 @@ arch:
   - i386
 startup: services
 boot: auto
+init: false
 image: ghcr.io/flozsc/{arch}-addon-gitea
 ports:
   3000/tcp: 3000
