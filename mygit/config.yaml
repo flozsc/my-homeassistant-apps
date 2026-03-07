@@ -1,5 +1,5 @@
 name: "MyGit - Private Git Server"
-version: "0.1.0"
+version: "0.1.1"
 slug: mygit
 description: "Lightweight private Git server with web interface"
 url: "https://github.com/flozsc/mygit"
