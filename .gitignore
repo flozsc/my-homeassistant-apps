@@ -1,0 +1,20 @@
+# Local development
+*.log
+test_*
+/tmp/
+
+# IDE/Editor
+tags
+.idea/
+.vscode/
+
+# Build artifacts
+*.tar.gz
+*.zip
+
+# Test data
+test_data/
+test_environment/
+
+# Local test files
+/tmp/gitea-test/

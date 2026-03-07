@@ -2,14 +2,30 @@
 
 bashio::log.info "Starting Gitea..."
 
-ROOT_URL=$(bashio::config 'root_url')
-ADMIN_USERNAME=$(bashio::config 'admin_username')
-ADMIN_EMAIL=$(bashio::config 'admin_email')
-HTTP_PORT=$(bashio::config 'http_port')
-SSH_PORT=$(bashio::config 'ssh_port')
+# Try to get configuration from Supervisor API, fall back to defaults for local testing
+get_config() {
+    local key="$1"
+    local default="$2"
+    
+    # Try Supervisor API first (with timeout for local testing)
+    if timeout 2s bashio::config.exists "$key" >/dev/null 2>&1; then
+        timeout 2s bashio::config "$key"
+        return
+    fi
+    
+    # For local testing without Supervisor, use hardcoded defaults
+    echo "$default"
+}
 
-mkdir -p /data/gitea
-mkdir -p /data/git
+ROOT_URL=$(get_config 'root_url' 'http://localhost:3000')
+ADMIN_USERNAME=$(get_config 'admin_username' 'gitea_admin')
+ADMIN_EMAIL=$(get_config 'admin_email' 'admin@example.com')
+HTTP_PORT=$(get_config 'http_port' '3000')
+SSH_PORT=$(get_config 'ssh_port' '2222')
+
+# Create directories if they don't exist
+[ -d /data/gitea ] || mkdir -p /data/gitea
+[ -d /data/git ] || mkdir -p /data/git
 
 cat > /data/gitea/app.ini << EOF
 APP_NAME = Gitea

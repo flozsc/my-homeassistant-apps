@@ -6,13 +6,18 @@ profile gitea flags=(attach_disconnected,mediate_deleted) {
   file,
   signal (send) set=(kill,term,int,hup,cont),
 
-  # S6-Overlay
+  # S6-Overlay (non-root operation)
   /init ix,
   /bin/** ix,
   /usr/bin/** ix,
+  /usr/bin/s6-svscan ix,
+  /usr/bin/s6-supervise ix,
+  /usr/bin/s6-ipcserver ix,
+  /usr/bin/s6-ipcserverd ix,
   /run/{s6,s6-rc*,service}/** ix,
   /package/** ix,
   /command/** ix,
+  /etc/s6/** rix,
   /etc/services.d/** rwix,
   /etc/cont-init.d/** rwix,
   /etc/cont-finish.d/** rwix,
