@@ -1,5 +1,5 @@
 name: Gitea
-version: "2.0.7"
+version: "2.0.8"
 slug: gitea
 description: Private Git service with SQLite database
 arch:
@@ -9,7 +9,6 @@ arch:
   - i386
 startup: services
 boot: auto
-init: false
 image: ghcr.io/flozsc/{arch}-addon-gitea
 ports:
   3000/tcp: 3000
