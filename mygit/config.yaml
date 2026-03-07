@@ -1,5 +1,5 @@
 name: "MyGit - Private Git Server"
-version: "0.1.1"
+version: "0.1.2"
 slug: mygit
 description: "Lightweight private Git server with web interface"
 url: "https://github.com/flozsc/mygit"
@@ -16,6 +16,9 @@ map:
   - type: data
     read_only: false
 
+ports:
+  3000/tcp: 3000
+
 options:
   http_port: 3000
   admin_username: admin
@@ -30,4 +33,4 @@ schema:
 
 hassio_api: true
 auth_api: true
-watchdog: http://[HOST]:[PORT:3000]/
+watchdog: tcp://[HOST]:[PORT:3000]/
