@@ -1,0 +1,39 @@
+{{define "title"}}Repositories{{end}}
+
+{{define "content"}}
+<div class="repos-header">
+    <h2>Repositories</h2>
+    <a href="/repos/new" class="button primary">New Repository</a>
+</div>
+
+{{if .ErrorMessage}}
+<div class="message error">{{.ErrorMessage}}</div>
+{{end}}
+
+<div class="repos-list">
+    {{if .Repos}}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Last Commit</th>
+                <th>Size</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Repos}}
+            <tr>
+                <td><a href="/repos/{{.Name}}">{{.Name}}</a></td>
+                <td>{{.LastCommit}}</td>
+                <td>{{.Size}}</td>
+                <td><a href="/repos/{{.Name}}">View</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <div class="message info">No repositories yet. Create your first repository!</div>
+    {{end}}
+</div>
+{{end}}

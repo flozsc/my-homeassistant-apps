@@ -1,0 +1,29 @@
+{{define "title"}}Login{{end}}
+
+{{define "content"}}
+<div class="login-form">
+    <h2>Login to MyGit</h2>
+    
+    {{if .ErrorMessage}}
+    <div class="message error">{{.ErrorMessage}}</div>
+    {{end}}
+    
+    <form action="/login" method="POST">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        
+        <button type="submit" class="button primary">Login</button>
+    </form>
+    
+    <div class="login-alternative">
+        <p>Don't have an account? Contact your administrator.</p>
+    </div>
+</div>
+{{end}}

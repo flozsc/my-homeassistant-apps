@@ -1,0 +1,89 @@
+{{define "title"}}Settings{{end}}
+
+{{define "content"}}
+<div class="settings">
+    <h2>Settings</h2>
+    
+    {{if .SuccessMessage}}
+    <div class="message success">{{.SuccessMessage}}</div>
+    {{end}}
+    
+    <div class="settings-section">
+        <h3>API Keys</h3>
+        <p>Generate API keys for programmatic access to your repositories.</p>
+        
+        {{if .APIKeys}}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Scopes</th>
+                    <th>Expires</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .APIKeys}}
+                <tr>
+                    <td>{{.Key}}</td>
+                    <td>{{.Scopes}}</td>
+                    <td>{{.Expires}}</td>
+                    <td><button class="button small">Revoke</button></td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <div class="message info">No API keys yet.</div>
+        {{end}}
+        
+        <form action="/settings/api-keys" method="POST">
+            <div class="form-group">
+                <label for="scopes">Scopes</label>
+                <select id="scopes" name="scopes" multiple>
+                    <option value="read">Read</option>
+                    <option value="write">Write</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <button type="submit" class="button primary">Generate API Key</button>
+        </form>
+    </div>
+    
+    <div class="settings-section">
+        <h3>SSH Keys</h3>
+        <p>Manage SSH keys for Git operations over SSH.</p>
+        
+        <form action="/settings/ssh-keys" method="POST">
+            <div class="form-group">
+                <label for="ssh-key">Public Key</label>
+                <textarea id="ssh-key" name="ssh_key" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="button primary">Add SSH Key</button>
+        </form>
+        
+        {{if .SSHKeys}}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Fingerprint</th>
+                    <th>Comment</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .SSHKeys}}
+                <tr>
+                    <td>{{.Fingerprint}}</td>
+                    <td>{{.Comment}}</td>
+                    <td><button class="button small">Remove</button></td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <div class="message info">No SSH keys yet.</div>
+        {{end}}
+    </div>
+</div>
+{{end}}

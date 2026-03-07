@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	Version = "1.0.0"
+	Version = "0.0.1"
 	AppName = "mygit"
 )
 
@@ -66,6 +66,9 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	
+	// For now, keep simple response
+	// TODO: Replace with template rendering when we have a proper templating system
 	fmt.Fprintf(w, "Welcome to %s v%s!", AppName, Version)
 }
 
