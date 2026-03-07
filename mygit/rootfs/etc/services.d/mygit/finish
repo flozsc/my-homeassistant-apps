@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bashio
+
+# Cleanup script that runs when the service stops
+if [ -f /usr/bin/bashio ]; then
+    bashio::log.info "MyGit service stopping..."
+else
+    echo "MyGit service stopping..."
+fi
+
+# Perform any cleanup if needed
+# exit 0 indicates successful shutdown
+exit 0
