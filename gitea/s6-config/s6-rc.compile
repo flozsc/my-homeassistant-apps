@@ -1,7 +1,0 @@
-#!/bin/execlineb -P
-# S6 configuration optimized for non-root container operation
-# This avoids suexec operations that require root privileges
-
-# Set up logging
-fdmove -c 2 1
-s6-rc -l /var/log/s6-rc -u change

@@ -76,5 +76,5 @@ bashio::log.info "  Registration: Disabled"
 mkdir -p /data/gitea /data/git/repositories /data/git/custom
 chmod -R 755 /data/gitea /data/git
 
-# Run Gitea directly (container runs as git user)
+# Run Gitea directly (let HA's S6 handle process management)
 exec /usr/local/bin/gitea web --config /data/gitea/app.ini --custom-path /data/git/custom --work-path /data/git

@@ -23,5 +23,5 @@ RUN apk add --no-cache curl gcompat git && \
       chmod -R 775 /data
 
 COPY run.sh /
-COPY s6-services/gitea/ /etc/services.d/gitea/
+
 RUN chmod a+x /run.sh
