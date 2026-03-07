@@ -1,34 +1,30 @@
 #!/bin/sh
 
-# Set default values
+# MyGit Run Script for Home Assistant
+# Works with HA's built-in S6 overlay when init: true
+
+# Set defaults (Home Assistant will override via environment variables)
 HTTP_PORT=${HTTP_PORT:-3000}
-REPO_STORAGE=${REPO_STORAGE:-/data/repos}
 ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+REPO_STORAGE=${REPO_STORAGE:-/data/repos}
 
 # Export for the application
 export HTTP_PORT
-export REPO_STORAGE
 export ADMIN_USERNAME
+export REPO_STORAGE
 
-# If admin password is set, export it
+# Password handling - only set if explicitly configured
 if [ -n "${ADMIN_PASSWORD}" ]; then
     export ADMIN_PASSWORD
 fi
 
-# Ensure repository directory exists
+# Directory setup
 mkdir -p "$REPO_STORAGE" 2>/dev/null || true
 chmod 755 "$REPO_STORAGE" 2>/dev/null || true
 
-# Start the application
-echo "Starting MyGit v1.0.0..."
-echo "  HTTP Port: $HTTP_PORT"
-echo "  Repository Storage: $REPO_STORAGE"
-echo "  Admin User: $ADMIN_USERNAME"
+# Log startup
+echo "[MyGit] Starting v0.0.4 with Home Assistant S6 overlay"
+echo "[MyGit] Configuration: Port=$HTTP_PORT, User=$ADMIN_USERNAME, Storage=$REPO_STORAGE"
 
-if [ -n "$ADMIN_PASSWORD" ]; then
-    echo "  Admin Password: [SET]"
-else
-    echo "  Admin Password: [NOT SET - Web UI will be read-only]"
-fi
-
+# Execute the application
 exec /usr/local/bin/mygit

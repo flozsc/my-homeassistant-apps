@@ -23,11 +23,13 @@ WORKDIR /app
 COPY . .
 RUN /usr/local/go/bin/go build -o /usr/local/bin/mygit ./src/main.go
 
-# Copy S6 service configuration
+# Copy run script and S6 service configuration
+COPY run.sh /run.sh
 COPY rootfs/ / 
 
-# Set permissions for S6 service files
-RUN chmod +x /etc/services.d/mygit/run /etc/services.d/mygit/finish && \
+# Set permissions
+RUN chmod +x /run.sh /etc/services.d/mygit/run && \
+    chown git:git /run.sh && \
     chown -R root:root /etc/services.d/mygit
 
 USER git
