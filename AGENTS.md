@@ -49,12 +49,12 @@ mygit/
 
 ### 3. Home Assistant Integration
 - Use `init: true` for S6 overlay compatibility
-- Implement proper S6 service configuration with `/etc/services.d/` directory
+- Keep configuration simple - use environment variables
 - Follow addon configuration best practices
 - Implement health checks
 - Support backup/restore
 - Use Supervisor API for configuration
-- Ensure applications run as child processes of S6 (not PID 1)
+- Let Home Assistant's built-in S6 handle process management
 
 ### 4. Authentication Flow
 ```
@@ -87,13 +87,13 @@ Client → Authentication Middleware → Permission Check → Handler
 - **Code Comments**: Comprehensive inline docs
 
 ### 8. Lessons Learned from Gitea Issues
-- **S6 Overlay**: Must run as PID 1, configure properly with service directories
-- **S6 Service Files**: Require `/etc/services.d/<service>/run` and `finish` scripts
+- **S6 Overlay**: Use Home Assistant's built-in S6, don't add custom configuration
+- **Simplicity**: Keep process management simple and reliable
 - **Permissions**: Volume mounts need careful handling
 - **Non-Root**: Run as dedicated user (git:git)
-- **Configuration**: Use Supervisor API with fallbacks
-- **Testing**: Local testing with podman works well
-- **PID 1**: S6 overlay must be PID 1, applications run as child processes
+- **Configuration**: Use environment variables with Supervisor API fallbacks
+- **Testing**: Test in target environment (Home Assistant), not just locally
+- **PID 1**: Let Home Assistant's S6 be PID 1, our app runs as child process
 
 ### 9. Decision Making Principles
 1. **Favor Simplicity**: When in doubt, choose the simpler solution
@@ -101,6 +101,53 @@ Client → Authentication Middleware → Permission Check → Handler
 3. **Security First**: Never compromise on security
 4. **Documentation**: If it's not documented, it doesn't exist
 5. **Test Coverage**: No feature is complete without tests
+
+### 9. S6 Overlay Decision
+
+**Approach**: Simple and reliable - use Home Assistant's built-in S6 overlay without custom configuration
+
+**Rationale**:
+- Avoids PID 1 conflicts and complexity
+- Uses Home Assistant's proven S6 implementation
+- Simpler to maintain and debug
+- Works reliably in production
+
+**Implementation**:
+- `init: true` in config.yaml
+- Simple run script as entrypoint
+- No custom S6 service files
+- Environment variables for configuration
+
+**When to Revisit**:
+- If specific S6 features are needed
+- If Home Assistant changes base image significantly
+- If performance issues arise
+
+### 9. S6 Overlay Decision
+
+**Approach**: Use Home Assistant base image's S6 overlay with `init: false`
+
+**Rationale**:
+- Home Assistant base image (v3+) includes S6 overlay
+- Setting `init: false` prevents double initialization
+- Follows official HA documentation (configuration.md line 195)
+- Avoids PID 1 conflicts completely
+- Simpler and more reliable than custom S6 configuration
+
+**Implementation**:
+- `init: false` in config.yaml (CRITICAL)
+- Simple run script as entrypoint
+- Minimal S6 service wrapper
+- Environment variables for configuration
+
+**Official Documentation**:
+> "Starting in V3 of S6 setting this to `false` is required or the addon won't start"
+> - Home Assistant Apps Configuration Documentation
+
+**When to Revisit**:
+- If Home Assistant changes base image significantly
+- If official recommendations change
+- If specific init features become necessary
 
 ### 10. Future Roadmap
 ```

@@ -2,19 +2,25 @@
 
 ## 🎯 Development Approach
 
-**Key Decision**: Simple and reliable - use Home Assistant's built-in S6 overlay without custom configuration.
+**Key Decision**: Use Home Assistant's base image S6 overlay with `init: false`
 
 ### Why This Approach
-- Avoids PID 1 conflicts
-- Uses proven HA patterns
-- Simpler to maintain
-- Works reliably in production
+- Home Assistant base image (v3+) includes S6 overlay
+- Setting `init: false` tells HA not to add another init system
+- Avoids PID 1 conflicts and double initialization
+- Follows official HA documentation recommendations
+- Simpler to maintain and more reliable
+
+### Critical Configuration
+```yaml
+init: false  # REQUIRED for S6 overlay base images
+```
 
 ### When to Change
 Only reconsider if:
-- Specific S6 features are absolutely required
 - Home Assistant changes base image significantly
-- Performance issues arise that require custom S6 tuning
+- Specific init features are absolutely required
+- Official HA recommendations change
 
 ## 🚀 Getting Started
 
