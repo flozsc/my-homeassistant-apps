@@ -25,12 +25,11 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "Building version $VERSION"
 
-      - name: Extract build args from build.yaml
+      - name: Extract build args from Dockerfile
         id: buildargs
         run: |
-          BUILD_FROM=$(grep -A1 "build_from:" gitea/build.yaml | grep "amd64:" | sed 's/.*amd64: //')
-          echo "BUILD_FROM=$BUILD_FROM" >> $GITHUB_OUTPUT
-          GITEA_VERSION=$(grep "GITEA_VERSION:" gitea/build.yaml | sed 's/GITEA_VERSION: "//' | tr -d '"')
+          echo "BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest" >> $GITHUB_OUTPUT
+          GITEA_VERSION=$(grep "ARG GITEA_VERSION=" gitea/Dockerfile | sed 's/ARG GITEA_VERSION=//')
           echo "GITEA_VERSION=$GITEA_VERSION" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
