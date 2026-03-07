@@ -7,9 +7,9 @@ ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
 
 # Ensure repository directory exists
 if [ ! -d "$REPO_STORAGE" ]; then
-    mkdir -p "$REPO_STORAGE"
+    mkdir -p "$REPO_STORAGE" 2>/dev/null || true
 fi
-chmod 755 "$REPO_STORAGE"
+chmod 755 "$REPO_STORAGE" 2>/dev/null || true
 
 echo "Starting MyGit v1.0.0..."
 echo "  HTTP Port: $HTTP_PORT"
