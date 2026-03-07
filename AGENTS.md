@@ -129,6 +129,12 @@ Q3 2026
 - [ ] Verify in multiple environments
 - [ ] Update documentation if needed
 
+### For All Code Changes
+- [ ] Commit changes to GitHub with a descriptive commit message
+- [ ] Push changes to the appropriate branch (usually main)
+- [ ] Verify changes are visible in the GitHub repository
+- [ ] Update any related documentation or changelogs
+
 ## 🤝 Collaboration Guidelines
 
 ### When Working with Users
@@ -144,3 +150,10 @@ Q3 2026
 3. **Test**: Verify changes work
 4. **Document**: Update all relevant docs
 5. **Review**: Present changes for feedback
+
+### Commit Policy
+1. **Always Commit**: All code changes must be committed to GitHub before considering work complete
+2. **Descriptive Messages**: Use clear, descriptive commit messages that explain the "why" not just the "what"
+3. **Atomic Commits**: Make small, focused commits for logical units of change
+4. **Version Bumps**: Always bump versions when making breaking changes or significant updates
+5. **Tag Releases**: Create Git tags for major releases and versions
