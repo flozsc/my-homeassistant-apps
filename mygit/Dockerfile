@@ -24,7 +24,7 @@ COPY . .
 RUN /usr/local/go/bin/go build -o /usr/local/bin/mygit ./src/main.go
 
 # Copy startup script
-COPY run-test.sh /run.sh
+COPY run.sh /run.sh
 RUN chmod +x /run.sh && chown git:git /run.sh
 
 USER git
