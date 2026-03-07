@@ -21,10 +21,10 @@ RUN apk add --no-cache curl gcompat git && \
     mkdir -p /data/gitea /data/git/repositories /data/git/custom && \
     chown -R git:git /data
 
-USER git
-
 COPY run.sh /
 RUN chmod a+x /run.sh
+
+USER git
 
 ENTRYPOINT [ "/run.sh" ]
 CMD []
