@@ -1,5 +1,5 @@
 name: Gitea
-version: "2.0.13"
+version: "2.0.14"
 slug: gitea
 description: Private Git service with SQLite database
 arch:

@@ -60,5 +60,5 @@ bashio::log.info "  Registration: Disabled"
 mkdir -p /data/gitea /data/git/repositories /data/git/custom
 chmod -R 755 /data/gitea /data/git
 
-# Use s6-setuidgid to drop privileges and run Gitea as the git user
-exec s6-setuidgid git /usr/local/bin/gitea web --config /data/gitea/app.ini --custom-path /data/git/custom --work-path /data/git
+# Run Gitea directly (container runs as git user)
+exec /usr/local/bin/gitea web --config /data/gitea/app.ini --custom-path /data/git/custom --work-path /data/git

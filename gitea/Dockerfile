@@ -25,4 +25,5 @@ RUN apk add --no-cache curl gcompat git && \
 COPY run.sh /
 RUN chmod a+x /run.sh
 
+USER git
 CMD [ "/run.sh" ]

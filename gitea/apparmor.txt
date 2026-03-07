@@ -30,7 +30,6 @@ profile gitea flags=(attach_disconnected,mediate_deleted) {
   # Gitea specific
   /usr/bin/entrypoint cx,
   /usr/local/bin/gitea ix,
-  /usr/bin/s6-setuidgid ix,
   
   # Allow gitea to manage its own files
   owner /data/gitea/** rw,
