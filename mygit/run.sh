@@ -1,20 +1,21 @@
-#!/usr/bin/with-contenv bashio
+#!/bin/sh
 
-# MyGit Run Script - Reads config from HA Supervisor API
+# MyGit Run Script - Works with or without HA Supervisor
 
-HTTP_PORT=$(bashio::config 'http_port')
-ADMIN_USERNAME=$(bashio::config 'admin_username')
-REPO_STORAGE=$(bashio::config 'repo_storage')
+# Use environment variables with sensible defaults
+HTTP_PORT=${HTTP_PORT:-3000}
+ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+REPO_STORAGE=${HTTP_REPO_STORAGE:-/data/repos}
+ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
 
-export HTTP_PORT ADMIN_USERNAME REPO_STORAGE
+export HTTP_PORT ADMIN_USERNAME REPO_STORAGE ADMIN_PASSWORD
 
-if bashio::config.exists 'admin_password'; then
-    export ADMIN_PASSWORD=$(bashio::config 'admin_password')
-fi
+# Create storage directory
+mkdir -p "$REPO_STORAGE" 2>/dev/null || true
 
-bashio::log.info "Starting MyGit..."
-bashio::log.info "  HTTP Port: ${HTTP_PORT}"
-bashio::log.info "  Admin User: ${ADMIN_USERNAME}"
-bashio::log.info "  Repository Storage: ${REPO_STORAGE}"
+echo "Starting MyGit v0.1.2 on port $HTTP_PORT..."
+echo "Storage: $REPO_STORAGE"
+echo "User: $ADMIN_USERNAME"
 
+# Execute the application
 exec /usr/local/bin/mygit
