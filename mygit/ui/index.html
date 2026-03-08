@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mygit</title>
+  <link rel="stylesheet" href="/ui/styles.css">
+  <link rel="icon" href="/ui/favicon.ico">
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="header-content">
+        <a href="/" class="logo">mygit</a>
+        <nav class="nav" id="nav">
+          <a href="#/" class="nav-link">Repositories</a>
+          <a href="#/new" class="nav-link" id="nav-new-repo">New Repository</a>
+          <span id="user-info" class="user-info"></span>
+          <button id="logout-btn" class="btn btn-small" style="display:none;">Logout</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main">
+      <div id="content"></div>
+    </main>
+  </div>
+
+  <script src="/ui/app.js"></script>
+</body>
+</html>

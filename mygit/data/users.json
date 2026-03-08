@@ -1,0 +1,9 @@
+[
+  {
+    "username": "admin",
+    "password_hash": "$2a$10$QgUFkMFWgoTmlYO1BcnjjuaXFl9KYqE0a0CGw2KXPRhpIy3QKJgpC",
+    "scopes": [
+      "admin"
+    ]
+  }
+]

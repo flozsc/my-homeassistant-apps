@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # MyGit Local Development Test Script
-# Prerequisites: Go 1.25+, git
+# Prerequisites: Go 1.21+, git
 
 set -e
 
@@ -11,7 +11,7 @@ echo
 
 # Check if Go is installed
 if ! command -v go &> /dev/null; then
-    echo "Error: Go is not installed. Please install Go 1.25+ first."
+    echo "Error: Go is not installed. Please install Go 1.21+ first."
     echo "Download from: https://go.dev/dl/"
     exit 1
 fi
@@ -22,19 +22,13 @@ echo
 
 # Build the application
 echo "Building MyGit..."
-go build -o mygit ./src/main.go
+go build -o mygit .
 echo "Build successful"
 echo
 
 # Set up directories
 TEST_DIR="./test-repos"
 mkdir -p "$TEST_DIR"
-
-# Copy web templates to expected location
-mkdir -p /data/web/templates
-mkdir -p /data/web/static
-cp -r web/templates/* /data/web/templates/ 2>/dev/null || true
-cp -r web/static/* /data/web/static/ 2>/dev/null || true
 
 # Configuration
 HTTP_PORT=${HTTP_PORT:-3000}
@@ -65,28 +59,37 @@ sleep 2
 echo
 echo "Running tests..."
 
-# Test 1: 401 without auth
+# Test 1: UI should be public (200)
 RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$HTTP_PORT/)
-if [ "$RESPONSE" = "401" ]; then
-    echo "  Test 1: 401 Unauthorized - expected"
+if [ "$RESPONSE" = "200" ]; then
+    echo "  Test 1: UI served - OK"
 else
     echo "  Test 1: Unexpected response: $RESPONSE"
 fi
 
-# Test 2: Authenticated
-RESPONSE=$(curl -s -u "$ADMIN_USERNAME:$ADMIN_PASSWORD" -w "%{http_code}" http://localhost:$HTTP_PORT/)
+# Test 2: UI assets should be public (200)
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$HTTP_PORT/ui/styles.css)
 if [ "$RESPONSE" = "200" ]; then
-    echo "  Test 2: Authenticated - OK"
+    echo "  Test 2: UI styles.css - OK"
 else
     echo "  Test 2: Failed: $RESPONSE"
 fi
 
-# Test 3: Repos endpoint
-RESPONSE=$(curl -s -u "$ADMIN_USERNAME:$ADMIN_PASSWORD" -w "%{http_code}" http://localhost:$HTTP_PORT/repos)
-if [ "$RESPONSE" = "200" ]; then
-    echo "  Test 3: Repos endpoint - OK"
+# Test 3: API requires auth (401)
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$HTTP_PORT/api/v1/repos)
+if [ "$RESPONSE" = "401" ]; then
+    echo "  Test 3: API auth required - OK"
 else
-    echo "  Test 3: Failed: $RESPONSE"
+    echo "  Test 3: Unexpected response: $RESPONSE"
+fi
+
+# Test 4: Authenticated API access
+RESPONSE=$(curl -s -w "\n%{http_code}" -u "$ADMIN_USERNAME:$ADMIN_PASSWORD" http://localhost:$HTTP_PORT/api/v1/repos)
+STATUS=$(echo "$RESPONSE" | tail -n1)
+if [ "$STATUS" = "200" ]; then
+    echo "  Test 4: Authenticated API - OK"
+else
+    echo "  Test 4: Failed: $STATUS"
 fi
 
 echo

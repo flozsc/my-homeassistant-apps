@@ -1,117 +1,128 @@
 # MyGit Development Guidelines
 
-## Project Overview
-**MyGit** is a lightweight, private Git server for Home Assistant (HA Apps).
-- Simple repository hosting over Git HTTP
-- Web UI for browsing repositories
-- Basic Auth authentication
-- HA addon/App integration
+**MyGit** is a lightweight Git server for Home Assistant with HTTP Git hosting, web UI, and Basic Auth.
 
 ---
 
-## Development Commands
-
-### Local Development (Preferred for Testing)
+## Build & Run
 ```bash
 cd mygit
 
-# Build and run (uses web templates from ./web/)
+# Build
 go build -o mygit ./src/main.go
 
 # Run with environment variables
-HTTP_PORT=3000 \
-ADMIN_USERNAME=admin \
-ADMIN_PASSWORD=secret \
-REPO_STORAGE=./test-repos \
-./mygit
+HTTP_PORT=3000 ADMIN_USERNAME=admin ADMIN_PASSWORD=secret REPO_STORAGE=./test-repos ./mygit
 
-# Or use the test script (builds + runs + tests)
+# Local development script (builds + runs + tests)
 ADMIN_PASSWORD=secret ./test-local.sh
 ```
 
-### Single Test
-```bash
-go test -v ./src/... -run TestName
-```
+---
 
-### All Tests
+## Testing
 ```bash
+# Run all tests
 go test -v ./src/...
+
+# Run a single test
+go test -v ./src/... -run TestName
+
+# Run tests with coverage
+go test -v -cover ./src/...
 ```
 
-### Lint & Format
+---
+
+## Lint & Format
 ```bash
+# Format code (always run before committing)
 gofmt -w ./src/
-go vet ./src/...
-```
 
-### Build for HA
-The Dockerfile handles building inside the container - just commit and HA rebuilds.
+# Run go vet
+go vet ./src/...
+
+# Check for staticcheck (if installed)
+staticcheck ./src/...
+```
 
 ---
 
 ## Code Style Guidelines
 
-### Go Conventions
-- Use `gofmt` for formatting
-- camelCase for functions/variables, PascalCase for types
-- Return errors with context: `fmt.Errorf("failed to create repo: %w", err)`
-- Never ignore errors with `_`
+### Formatting
+- Run `gofmt -w ./src/` before every commit
+- Use 4 spaces for indentation (Go standard)
+- Keep lines under 100 characters when practical
+
+### Naming Conventions
+- **Variables/Functions**: camelCase (`repoPath`, `getConfig`)
+- **Types/Interfaces**: PascalCase (`Repository`, `AuthHandler`)
+- **Constants**: PascalCase or camelCase (`MaxFileSize`, `httpPort`)
+- **Packages**: lowercase, short (`auth`, `handlers`, `git`)
+- **Files**: lowercase with underscores (`auth.go`, `git_handlers.go`)
+- **Acronyms**: Keep original case (`URL`, `HTTP`, `API`)
 
 ### Imports
-Standard library first, then external packages (alphabetical):
+Standard library first, then external packages (alphabetical within groups):
 ```go
 import (
+    "encoding/json"
     "fmt"
     "net/http"
     "os"
+    "path/filepath"
 
-    "github.com/flozsc/mygit/src/auth"
+    "github.com/go-git/go-git/v5"
+    "github.com/gorilla/mux"
 )
 ```
 
-### Types
-- Use explicit types
-- Prefer interfaces for testability
-- Document all exported functions
+### Types & Interfaces
+- Use explicit types, avoid `any` unless necessary
+- Prefer interfaces for testability and dependency injection
+- Define interfaces close to where they're used
 
 ### Error Handling
-- Return errors, don't log and continue
-- Use wrapped errors for context: `%w`
-- Handle errors explicitly
+- Always return errors with context using `%w`
+- Never ignore errors with `_`
+- Check errors immediately after calls
+- Use sentinel errors for known conditions:
+```go
+var ErrRepoNotFound = errors.New("repository not found")
+```
+
+### Logging
+- Use standard `log` package for simple apps
+- Log at appropriate levels: `log.Printf` for info, `log.Printf("ERROR: %v", err)` for errors
+
+### Constants & Config
+- Use environment variables for all configurable values
+- Provide sensible defaults
+- Validate config at startup
+
+---
+
+## Testing Guidelines
+- Tests in `*_test.go` files alongside source
+- Use table-driven tests for multiple cases
+- Create helper functions for common setup
+- Use `t.Cleanup()` for resource cleanup
 
 ---
 
 ## Home Assistant Integration
 
-### S6 Overlay (Critical)
-- Use `init: false` in config.yaml
-- Add minimal S6 service at `/etc/services.d/mygit/run`:
-  ```bash
-  #!/bin/sh
-  exec /run.sh
-  ```
-- HA's built-in S6 handles process management
+### Required Files
+- `config.yaml` - HA addon configuration
+- `Dockerfile` - Container build
+- `run.sh` - Entry point script
+- `rootfs/etc/services.d/mygit/run` - S6 service definition
 
 ### Config Flow
-1. config.yaml defines options (http_port, admin_username, etc.)
-2. run.sh reads via environment variables
+1. `config.yaml` defines addon options
+2. `run.sh` reads config and sets environment variables
 3. Go app reads from environment
-
-### Required Files
-- `config.yaml` - HA addon config
-- `Dockerfile` - Container build
-- `run.sh` - Entry point
-- `rootfs/etc/services.d/mygit/run` - S6 service definition
-- `web/templates/` - HTML templates (copied to /data/web/)
-- `web/static/` - CSS/images (copied to /data/web/static/)
-
----
-
-## Testing Strategy
-1. **Local first**: Test changes locally with `./test-local.sh`
-2. **HA second**: Rebuild addon in HA for final verification
-3. **Git operations**: Test clone/push to verify Git HTTP works
 
 ---
 
@@ -119,37 +130,30 @@ import (
 ```
 mygit/
 ├── src/
-│   ├── main.go           # Main app + handlers
-│   └── auth/             # Authentication middleware
+│   ├── main.go           # Entry point + route setup
+│   ├── auth/             # Authentication middleware
+│   ├── handlers/         # HTTP handlers
+│   ├── git/              # Git operations
+│   └── config/           # Configuration loading
 ├── web/
 │   ├── templates/        # HTML templates
-│   └── static/           # CSS, favicon
+│   └── static/           # CSS, images
 ├── config.yaml           # HA addon config
 ├── Dockerfile            # Container build
-├── run.sh               # Entry point
-├── rootfs/              # S6 service files
-└── test-local.sh        # Local development script
+└── run.sh               # Entry point
 ```
 
 ---
 
 ## Common Issues
-
-### Port Not Accessible
-- Ensure `ports: 3000/tcp: 3000` in config.yaml
-
-### App Not Starting
-- Check S6 service file exists at `/etc/services.d/mygit/run`
-- Check run.sh is executable
-
-### Web UI Not Rendering
-- Verify web/ files copied to /data/web/ in Dockerfile
-- Check templates parse correctly
+- **Port not accessible**: Ensure `ports: 3000/tcp: 3000` in config.yaml
+- **App not starting**: Verify S6 service file at `/etc/services.d/mygit/run`, check run.sh is executable
+- **Web UI not rendering**: Verify web/ files copied to /data/web/ in Dockerfile
 
 ---
 
 ## Commit Policy
-1. Always commit changes to GitHub
-2. Use descriptive commit messages
-3. Bump version in config.yaml for significant changes
-4. Test locally before pushing
+1. Always run `gofmt` and `go vet` before committing
+2. Test locally with `./test-local.sh` before pushing
+3. Use descriptive commit messages
+4. Bump version in config.yaml for significant changes

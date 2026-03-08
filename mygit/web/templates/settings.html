@@ -50,20 +50,54 @@
         </form>
     </div>
     
-    <div class="settings-section">
+    <div class="settings-section" id="user-management-section" style="display:none;">
+        <h3>User Management</h3>
+        <table class="table" id="users-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Scopes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="users-tbody">
+                <!-- Filled by JS -->
+            </tbody>
+        </table>
+        <form id="create-user-form">
+            <div class="form-group">
+                <label for="new-username">Username</label>
+                <input type="text" id="new-username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="new-password">Password</label>
+                <input type="password" id="new-password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="new-scopes">Scopes</label>
+                <select id="new-scopes" name="scopes" multiple>
+                    <option value="read">Read</option>
+                    <option value="write">Write</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <button type="submit" class="button primary">Create User</button>
+        </form>
+    </div>
+
+    <div class="settings-section" id="ssh-key-section">
         <h3>SSH Keys</h3>
         <p>Manage SSH keys for Git operations over SSH.</p>
-        
-        <form action="/settings/ssh-keys" method="POST">
+
+        <form id="add-ssh-key-form">
             <div class="form-group">
                 <label for="ssh-key">Public Key</label>
                 <textarea id="ssh-key" name="ssh_key" rows="5" required></textarea>
             </div>
             <button type="submit" class="button primary">Add SSH Key</button>
         </form>
-        
-        {{if .SSHKeys}}
-        <table class="table">
+
+        <table class="table" id="ssh-keys-table" style="display:none;">
             <thead>
                 <tr>
                     <th>Fingerprint</th>
@@ -71,19 +105,11 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                {{range .SSHKeys}}
-                <tr>
-                    <td>{{.Fingerprint}}</td>
-                    <td>{{.Comment}}</td>
-                    <td><button class="button small">Remove</button></td>
-                </tr>
-                {{end}}
+            <tbody id="ssh-keys-tbody">
+                <!-- Filled by JS -->
             </tbody>
         </table>
-        {{else}}
-        <div class="message info">No SSH keys yet.</div>
-        {{end}}
+        <div class="message info" id="no-ssh-keys-msg">No SSH keys yet.</div>
     </div>
 </div>
 {{end}}
