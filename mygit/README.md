@@ -63,6 +63,13 @@ podman run -d \
 
 Open http://<ha-ip>:3000 in your browser. You'll be prompted for credentials (default: admin/admin).
 
+### Settings
+
+The Settings page provides access to user management and SSH key configuration. Click "Settings" in the header navigation after logging in.
+
+- **User Management** - Create and delete users (admin only)
+- **SSH Keys** - Add or remove SSH keys for Git operations
+
 ### Creating a Repository
 
 Repositories are created automatically when you push to them:

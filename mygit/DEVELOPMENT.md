@@ -215,9 +215,47 @@ Client → Nginx Proxy → MyGit → Git Backend
 ### Key Components
 
 - **HTTP Server**: Handles web and Git Smart HTTP requests
-- **Auth Middleware**: Basic auth and API key authentication
+- **Auth Middleware**: Basic auth and session-based authentication
 - **Git Backend**: Manages repository operations
 - **Config Manager**: Handles add-on configuration
+
+### Frontend UI
+
+The web interface is a single-page application (SPA) built with vanilla JavaScript:
+
+- **Source**: `ui/` directory
+- **Files**: `index.html`, `app.js`, `styles.css`, `app.js`
+- **Routing**: Hash-based routing (`#/`, `#/new`, `#/settings`, `#/repo/:repo`)
+
+#### UI Features
+
+| Feature | Route | Description |
+|---------|-------|-------------|
+| Repositories | `#/` | List all repositories |
+| New Repository | `#/new` | Create a new repository |
+| Settings | `#/settings` | User management and SSH keys |
+
+#### Settings Page
+
+The settings page (`/#/settings`) provides:
+
+- **API Keys** - Generate API keys for programmatic access
+- **User Management** (admin only) - Create and delete users
+- **SSH Keys** - Add/remove SSH keys for the authenticated user
+
+### Frontend Development
+
+```bash
+# Build the application (includes UI)
+go build -o mygit ./main.go
+
+# Run locally
+HTTP_PORT=3000 ADMIN_USERNAME=admin ADMIN_PASSWORD=secret REPO_STORAGE=./test-repos ./mygit
+
+# Access UI at http://localhost:3000
+```
+
+The UI is served from the embedded `ui/` directory in the binary.
 
 ## 🤝 Contributing
 
