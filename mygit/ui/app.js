@@ -502,6 +502,7 @@ function initRouter() {
   router.add('/', renderRepoList);
   router.add('/new', renderNewRepo);
   router.add('/repo/:repo', (params) => renderRepo({ repo: params.repo }));
+  router.add('/settings', renderSettings);
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -517,6 +518,99 @@ document.addEventListener('DOMContentLoaded', async () => {
   await checkAuth();
   router.handleRoute();
 });
+
+function renderSettings() {
+  el('content').innerHTML = html`
+    <div class="settings-page">
+      <h1 class="page-title">Settings</h1>
+
+      <div class="settings-section">
+        <h3>API Keys</h3>
+        <p>Generate API keys for programmatic access to your repositories.</p>
+
+        <div id="api-keys-section">
+          <!-- API keys will be rendered here -->
+        </div>
+
+        <form id="create-api-key-form">
+          <div class="form-group">
+            <label for="api-key-scopes">Scopes</label>
+            <select id="api-key-scopes" name="scopes" multiple>
+              <option value="read">Read</option>
+              <option value="write">Write</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Generate API Key</button>
+        </form>
+      </div>
+
+      <div class="settings-section" id="user-management-section" style="display:none;">
+        <h3>User Management</h3>
+        <table class="table" id="users-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Scopes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
+        <form id="create-user-form">
+          <div class="form-group">
+            <label for="new-username">Username</label>
+            <input type="text" id="new-username" name="username" required>
+          </div>
+          <div class="form-group">
+            <label for="new-password">Password</label>
+            <input type="password" id="new-password" name="password" required>
+          </div>
+          <div class="form-group">
+            <label for="new-scopes">Scopes</label>
+            <select id="new-scopes" name="scopes" multiple>
+              <option value="read">Read</option>
+              <option value="write">Write</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Create User</button>
+        </form>
+      </div>
+
+      <div class="settings-section" id="ssh-key-section">
+        <h3>SSH Keys</h3>
+        <p>Manage SSH keys for Git operations over SSH.</p>
+
+        <form id="add-ssh-key-form">
+          <div class="form-group">
+            <label for="ssh-key">Public Key</label>
+            <textarea id="ssh-key" name="ssh_key" rows="5" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Add SSH Key</button>
+        </form>
+
+        <table class="table" id="ssh-keys-table" style="display:none;">
+          <thead>
+            <tr>
+              <th>Fingerprint</th>
+              <th>Comment</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ssh-keys-tbody">
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
+        <div class="empty-state" id="no-ssh-keys-msg">No SSH keys yet.</div>
+      </div>
+    </div>
+  `;
+
+  initSettings();
+}
 
 function initSettings() {
   // Load current user info to determine admin status
@@ -599,6 +693,17 @@ function initSettings() {
         .catch(err => alert(err.message));
     });
   }
+
+  // Bind create API key form
+  const createApiKeyForm = el('create-api-key-form');
+  if (createApiKeyForm) {
+    createApiKeyForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const scopes = Array.from(el('api-key-scopes').selectedOptions).map(o => o.value);
+      // For now, just show a message - API key generation would need a backend endpoint
+      alert('API key generation is not yet implemented');
+    });
+  }
 }
 
 function renderUserList(users) {
@@ -619,9 +724,5 @@ function renderUserList(users) {
       }
     });
   });
-}
-
-if (window.location.pathname === '/settings') {
-  initSettings();
 }
 
