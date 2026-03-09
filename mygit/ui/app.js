@@ -57,12 +57,14 @@ function html(strings, ...values) {
 
 async function api(endpoint, options = {}) {
   const token = localStorage.getItem('token');
+  console.log('API call:', endpoint, 'Token available:', !!token, 'Token:', token ? token.substring(0, 20) + '...' : 'none');
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+    console.log('Authorization header:', headers['Authorization'].substring(0, 30) + '...');
   }
 
   const response = await fetch(`${API_BASE}${endpoint}`, {
@@ -75,6 +77,13 @@ async function api(endpoint, options = {}) {
     currentUser = null;
     updateAuthUI();
     throw new Error('Unauthorized');
+  }
+
+  // Capture auth token from response header (for Basic Auth logins)
+  const authToken = response.headers.get('X-Auth-Token');
+  if (authToken) {
+    localStorage.setItem('token', authToken);
+    console.log('Token captured from header:', authToken.substring(0, 20) + '...');
   }
 
   if (!response.ok) {
@@ -129,23 +138,28 @@ function showLogin() {
     const password = form.password.value;
 
     try {
-      const authHeader = btoa(`${username}:${password}`);
+      console.log('Attempting login for:', username);
       const response = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Basic ${authHeader}`,
         },
         body: JSON.stringify({ username, password }),
       });
 
+      console.log('Login response status:', response.status);
+      console.log('Login response ok:', response.ok);
+
       if (!response.ok) {
         const error = await response.json();
+        console.log('Login error response:', error);
         throw new Error(error.message || 'Login failed');
       }
 
       const data = await response.json();
+      console.log('Login response:', data);
       localStorage.setItem('token', data.token);
+      console.log('Token stored:', localStorage.getItem('token'));
       currentUser = username;
       updateAuthUI();
       router.navigate('/');
@@ -206,6 +220,21 @@ async function renderRepoList() {
       el('content').innerHTML = html`<div class="error">${err.message}</div>`;
     }
   }
+}
+
+async function renderLogout() {
+  // Show a page that prompts to close the browser tab to fully logout
+  el('content').innerHTML = html`
+    <div class="logout-page">
+      <h1 class="page-title">Logged Out</h1>
+      <div class="logout-message">
+        <p>You have been logged out.</p>
+        <p><strong>Note:</strong> If you used Basic Auth (browser login popup),
+           you may need to close this browser tab to fully clear your credentials.</p>
+        <a href="#/" class="btn btn-primary" style="margin-top: 16px;">Go Home</a>
+      </div>
+    </div>
+  `;
 }
 
 async function renderNewRepo() {
@@ -503,16 +532,35 @@ function initRouter() {
   router.add('/new', renderNewRepo);
   router.add('/repo/:repo', (params) => renderRepo({ repo: params.repo }));
   router.add('/settings', renderSettings);
+  router.add('/logout', renderLogout);
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   initRouter();
 
-  el('logout-btn').addEventListener('click', () => {
+  el('logout-btn').addEventListener('click', async () => {
     localStorage.removeItem('token');
     currentUser = null;
     updateAuthUI();
-    router.navigate('/');
+
+    // Call logout endpoint to clear server-side session
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        await fetch(`${API_BASE}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+      } catch (err) {
+        console.log('Logout API call failed:', err);
+      }
+    }
+
+    // Navigate to logout page which clears Basic Auth
+    router.navigate('/logout');
   });
 
   await checkAuth();

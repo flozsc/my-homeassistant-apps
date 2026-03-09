@@ -73,6 +73,15 @@ func (s *SessionStore) Create(username string) (*Session, error) {
 	return session, nil
 }
 
+// CreateAndGetToken creates a session and returns just the token string
+func (s *SessionStore) CreateAndGetToken(username string) (string, error) {
+	session, err := s.Create(username)
+	if err != nil {
+		return "", err
+	}
+	return session.Token, nil
+}
+
 func (s *SessionStore) Get(token string) (*Session, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -240,7 +249,13 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Check for API key (from existing auth)
+		// Allow auth endpoints (login/logout) without auth - these are used to establish a session
+		if r.URL.Path == "/api/v1/auth/login" || r.URL.Path == "/api/v1/auth/logout" || r.URL.Path == "/api/v1/auth/me" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// Check for Bearer token
 		if apiKey := r.Header.Get("Authorization"); apiKey != "" {
 			if len(apiKey) > 7 && apiKey[:7] == "Bearer " {
 				token := apiKey[7:]
@@ -252,16 +267,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			}
 		}
 
-		// Check Basic auth
-		username, password, ok := r.BasicAuth()
-		if ok && ValidateCredentials(username, password) {
-			r = r.WithContext(context.WithValue(r.Context(), "username", username))
-			next.ServeHTTP(w, r)
-			return
-		}
-
-		// No valid auth
-		w.Header().Set("WWW-Authenticate", `Basic realm="MyGit"`)
+		// No valid auth - return 401 without WWW-Authenticate header
+		// (which would trigger browser's Basic Auth popup)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	})
 }

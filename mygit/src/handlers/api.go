@@ -42,12 +42,12 @@ func (h *APIHandler) RegisterRoutes(r chi.Router) {
 		r.Get("/users", auth.HandleListUsers)
 		r.Post("/users", auth.HandleCreateUser)
 		r.Delete("/users/{username}", auth.HandleDeleteUser)
-
-		// SSH key management (per‑user)
-		r.Get("/ssh-keys", auth.HandleListUserSSHKeys)
-		r.Post("/ssh-keys", auth.HandleAddUserSSHKey)
-		r.Delete("/ssh-keys/{fingerprint}", auth.HandleDeleteUserSSHKey)
 	})
+
+	// SSH key management (per‑user, not per‑repo)
+	r.Get("/ssh-keys", auth.HandleListUserSSHKeys)
+	r.Post("/ssh-keys", auth.HandleAddUserSSHKey)
+	r.Delete("/ssh-keys/{fingerprint}", auth.HandleDeleteUserSSHKey)
 }
 
 func handleHealth(w http.ResponseWriter, r *http.Request) {
